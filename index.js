@@ -10,18 +10,14 @@ require('dotenv').config()
 
 
 //connect to dataBase 
-const connect = async () => {
-    try {
-        const data = await mongoose.connect(process.env.DB_URL,  { useNewUrlParser: true, useUnifiedTopology: true})
-        if(data) {
-            app.listen(port, ()=> {
-                console.log('server on')
-            })
-        }
-    } catch(err) {
-        console.log(err)
+
+mongoose.connect(process.env.DB_URL,  { useNewUrlParser: true, useUnifiedTopology: true} )
+.then(res => {
+    if(res) {
+        app.listen(port, ()=> console.log('hola'))
     }
-}
+})
+.catch(err => console.log(err))
 
 //midlewares
 app.use(morgan('dev'))
@@ -44,4 +40,3 @@ app.use((req, res)=> {
     res.status(404).render('404')
 })
 
-connect()
