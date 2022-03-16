@@ -13,7 +13,11 @@ require('dotenv').config()
 const connect = async () => {
     try {
         const data = await mongoose.connect(process.env.DB_URL,  { useNewUrlParser: true, useUnifiedTopology: true})
-        console.log(`base de datos on : ${data.connection.name}`)
+        if(data) {
+            app.listen(port, ()=> {
+                console.log('server on')
+            })
+        }
     } catch(err) {
         console.log(err)
     }
@@ -40,8 +44,4 @@ app.use((req, res)=> {
     res.status(404).render('404')
 })
 
-app.listen(port, ()=> {
-    connect()
-    console.log('server on')
-})
-
+connect()
