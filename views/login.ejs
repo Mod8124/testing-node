@@ -1,0 +1,131 @@
+<%-include('partials/head.ejs',{name:'LoginPage'})%>
+
+<div class="wrap">
+  <div class="part1">
+
+    <div class="logoWrap">
+        <div id="logoWrap">
+            <img src="/logoBlack.svg" alt="logo anime blogs" onclick="location.assign('/')">
+        </div>
+    </div>
+        <div class="center">
+            <h1>Welcome back!</h1>
+            <p>Login for see news, topics, advices about anime and more....</p>
+            <h4>By weebs for weebs</h4>
+            <a class="btn" href="/">View more</a>
+        </div>
+  </div>
+
+  <div class="part2">
+
+    <div class="logoWrap wrapMoon">
+        <div class="moon">
+            <?xml version="1.0" ?><svg class="moonSvg" data-name="Layer 2" id="Layer_2" viewBox="0 0 35 35" xmlns="http://www.w3.org/2000/svg"><path d="M18.44,34.68a18.22,18.22,0,0,1-2.94-.24,18.18,18.18,0,0,1-15-20.86A18.06,18.06,0,0,1,9.59.63,2.42,2.42,0,0,1,12.2.79a2.39,2.39,0,0,1,1,2.41L11.9,3.1l1.23.22A15.66,15.66,0,0,0,23.34,21h0a15.82,15.82,0,0,0,8.47.53A2.44,2.44,0,0,1,34.47,25,18.18,18.18,0,0,1,18.44,34.68ZM10.67,2.89a15.67,15.67,0,0,0-5,22.77A15.66,15.66,0,0,0,32.18,24a18.49,18.49,0,0,1-9.65-.64A18.18,18.18,0,0,1,10.67,2.89Z"/></svg>
+        </div>
+    </div>
+
+        <div class="center">
+            <form>
+                <h2>Log In</h2>
+                <label>Email</label>
+                <input type="text" name="email">
+                <div class="email error"></div>
+            
+                <label>Password</label>
+                <input type="password" name="password">
+                <div class="password error"></div>
+            
+                <div class="btnForm">
+                    <button class="btn">Send</button>
+                </div>
+
+               <div class="btnLink">
+                <a href="/signup">or sign up</a>
+               </div>
+    
+            </form>
+        </div>
+  </div>
+</div>
+
+<script>
+      const moon = document.querySelector('.moon');
+      let active = localStorage.getItem('active')
+      const validEmail = document.querySelector('input[name=email]')
+      const form = document.querySelector('form');
+      const emailError = document.querySelector('.email')
+      const passwordError = document.querySelector('.password')
+
+      function check(e) {
+        let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if(e.target.value.match(regexEmail)) {
+          e.target.classList.add('check')
+      } else {
+          e.target.classList.remove('check')
+      }
+      }
+    
+    validEmail.addEventListener('input', check)
+
+    window.addEventListener('load', ()=> {
+
+       if(JSON.parse(active)) {
+            document.body.classList.add('active')
+
+       } else {
+           document.body.classList.remove('active')
+       }
+    })
+
+    moon.addEventListener('click', () => {
+       document.body.classList.toggle('active')
+
+       if(document.body.classList.contains('active')) {
+            localStorage.setItem('active', true)
+       }  else {
+            localStorage.setItem('active', false)
+       }
+
+    });
+
+    form.addEventListener('submit',  async(e)=> {
+        e.preventDefault();
+        const email = form.email.value;
+        const password = form.password.value;
+
+        console.log(email,password)
+
+        emailError.textContent = ''
+        passwordError.textContent = ''
+
+        try {
+            const data = await fetch('/login', {
+                method:"POST",
+                body:JSON.stringify({email,password}),
+                headers:{"Content-Type":"application/json"}
+            })
+
+            const result = await data.json();
+
+           
+            if(result.errors) {
+                emailError.textContent = result.errors.email;
+                passwordError.textContent = result.errors.password;
+            }
+
+            if(result.user) {
+              window.location.href = result.redirect
+            }
+
+        }
+
+        catch(err) {
+            console.log(err)
+        }
+    })
+
+
+
+</script>
+
+<%-include('partials/footer.ejs')%>
