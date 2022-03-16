@@ -12,12 +12,10 @@ require('dotenv').config()
 //connect to dataBase 
 
 mongoose.connect(process.env.DB_URL,  { useNewUrlParser: true, useUnifiedTopology: true} )
-.then(res => {
-    if(res) {
-        app.listen(port, ()=> console.log('hola'))
-    }
-})
-.catch(err => console.log(err))
+mongoose.connection.on('connected', () => {
+    console.log('Mongoose is connected!!!!');
+});
+
 
 //midlewares
 app.use(morgan('dev'))
@@ -40,3 +38,4 @@ app.use((req, res)=> {
     res.status(404).render('404')
 })
 
+app.listen(port, ()=> console.log('server on'))
